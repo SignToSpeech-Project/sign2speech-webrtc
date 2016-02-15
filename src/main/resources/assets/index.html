@@ -1,15 +1,23 @@
 <html>
 <head>
-    <script src="/assets/js/main.js"></script>
+    <script type="text/javascript" src="/assets/js/main.js"></script>
+    <link rel="stylesheet" type="text/css" href="/assets/css/main.css">
 </head>
 
 <body>
-    <video id="localVideo" autoplay muted style="width:40%;"></video>
-    <video id="remoteVideo" autoplay style="width:40%;"></video>
+    <video id="localVideo" autoplay muted></video>
+    <video id="remoteVideo" autoplay></video>
+    <div id="subtitleContent"></div>
 
     <br />
 
-    <input type="button" id="start" onclick="start(true)" value="Start Video"></input>
+    <input type="text" id="nickname">
+    <input type="button" id="setNickname" onclick="setNickname()" value="Set nickname">
+    <input type="button" id="start" onclick="start(true)" value="Start Video">
+
+    <br />
+    <input type="text" id="subtitle">
+    <input type="button" id="sendSubtitle" onclick="sendSubtitle()" value="Send a message">
 
     <script type="text/javascript">
         pageReady();
