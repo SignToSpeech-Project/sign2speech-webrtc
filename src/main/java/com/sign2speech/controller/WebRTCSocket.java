@@ -6,6 +6,8 @@ import org.wisdom.api.annotations.*;
 import org.wisdom.api.content.Json;
 import org.wisdom.api.http.websockets.Publisher;
 
+import java.util.concurrent.ConcurrentHashMap;
+
 /**
  * Created by matth on 14/02/2016.
  */
@@ -16,6 +18,8 @@ public class WebRTCSocket extends DefaultController {
 
     @Requires
     Publisher publisher;
+
+    private ConcurrentHashMap<String, String> clients = new ConcurrentHashMap<String, String>();
 
     @Requires
     Json json;
@@ -33,6 +37,7 @@ public class WebRTCSocket extends DefaultController {
     @OnMessage("/ws/{name}")
     public void onMessage(@Body String message, @Parameter("name") String name) {
         System.out.println("Receiving message on " + name + " : " + message);
-        publisher.publish("/ws/" + name, json.toJson(message.toUpperCase()));
+        //publisher.publish("/ws/" + name, json.toJson(message.toUpperCase()));
+        publisher.publish("/ws/" + name, message);
     }
 }
