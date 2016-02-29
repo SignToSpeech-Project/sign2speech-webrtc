@@ -25,19 +25,19 @@ public class SubtitleSocket extends DefaultController{
     @Requires
     Json _json;
 
-    @Opened("/ws/subtitle")
-    public void open(@Parameter("client") String client) {
-        LOGGER.info("Web socket opened by client: {}", client);
+    @Opened("/ws/subtitle/{roomID}")
+    public void open(@Parameter("roomID") String roomID, @Parameter("client") String client) {
+        LOGGER.info("Web socket opened by client: {} in room : {}", client, roomID);
     }
 
-    @Closed("/ws/subtitle")
-    public void close(@Parameter("client") String client) {
-        LOGGER.info("Web socket closed by client: {}", client);
+    @Closed("/ws/subtitle/{roomID}")
+    public void close(@Parameter("roomID") String roomID, @Parameter("client") String client) {
+        LOGGER.info("Web socket closed by client: {} in room : {}", client, roomID);
     }
 
-    @OnMessage("/ws/subtitle")
-    public void onMessage(@Parameter("client") String client, @Body String message) {
-        LOGGER.info("Receiving message from client: {} with content: {}", client, message);
-        _publisher.publish("/ws/subtitle", message);
+    @OnMessage("/ws/subtitle/{roomID}")
+    public void onMessage(@Parameter("roomID") String roomID, @Parameter("client") String client, @Body String message) {
+        LOGGER.info("Receiving message from client: {}  in room : {} with content: {}", client, roomID, message);
+        _publisher.publish("/ws/subtitle/"+roomID, message);
     }
 }
