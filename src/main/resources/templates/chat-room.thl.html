@@ -21,10 +21,6 @@
     	<nav>
 			<div class="nav-wrapper blue-grey darken-3">
 				<a href="#" class="brand-logo">SIGN2SPEECH - Room name: <span th:text="${roomID}"></span></a>
-				<ul id="nav-mobile" class="right hide-on-med-and-down">
-					<li><a href="whatisit.html">What is it?</a></li>
-					<li><a href="howtostart.html">How to start?</a></li>
-     			 </ul>
     		</div>
   		</nav>
 
@@ -33,6 +29,18 @@
 			<video id="remoteVideo" autoplay="true"></video>
 			<div id="subtitleContent"></div>
 		</div>
+
+		<div class="fixed-action-btn" style="bottom: 45px; right: 45px;">
+			<a class="btn-floating btn-large cyan darken-3">
+				<i class="large material-icons">list</i>
+			</a>
+    		<ul>
+				<li><a class="btn-floating red"><i class="medium material-icons">call_end</i></a></li>
+				<li><a class="btn-floating light-green darken-3"><i class="medium material-icons">chat</i></a></li>
+				<li><a class="btn-floating light-blue darken-4"><i class="medium material-icons">volume_mute</i></a></li>
+			</ul>
+  		</div>
+        
 
 		<script th:inline="javascript">
 			/*<![CDATA[*/
