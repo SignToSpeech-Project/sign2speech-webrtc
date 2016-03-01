@@ -25,14 +25,12 @@ public class WebRTCController extends DefaultController {
 
     @Route(method = HttpMethod.GET, uri = "/webrtc")
     public Result connection() {
-        URL indexPage = this.getClass().getClassLoader().getResource("/assets/index2.html");
+        URL indexPage = this.getClass().getClassLoader().getResource("/assets/connection.html");
         return ok(indexPage);
     }
 
     @Route(method = HttpMethod.GET, uri = "/webrtc/{roomID}")
     public Result chatRoom(@Parameter("roomID") String roomID) {
-        //URL indexPage = this.getClass().getClassLoader().getResource("/assets/index.html");
-        //return ok(indexPage);
         return ok(render(chatRoom, "roomID", roomID));
     }
 
