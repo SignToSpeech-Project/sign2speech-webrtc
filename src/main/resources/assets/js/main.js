@@ -44,14 +44,11 @@ function sendSubtitle(){
     subtitleConnection.send(JSON.stringify({'content':document.getElementById('subtitle').value}));
 }
 
-function setNickname(){
-    nickname = document.getElementById('nickname').value;
-    serverConnection.send(JSON.stringify({'isAuthentication':true,'nickname':nickname}));
-}
-
 function getUserMediaSuccess(stream) {
     localStream = stream;
     localVideo.src = window.URL.createObjectURL(stream);
+
+    serverConnection.send(JSON.stringify({'isReady':true}))
 }
 
 function start(isCaller) {
@@ -61,21 +58,14 @@ function start(isCaller) {
     peerConnection.addStream(localStream);
 
     if(isCaller) {
-        if(typeof nickname != 'undefined') {
-            peerConnection.createOffer(gotDescription, errorHandler);
-        }
-        else{
-            alert('Nickname not set');
-        }
+        peerConnection.createOffer(gotDescription, errorHandler);
     }
 }
 
 function gotMessageFromServer(message) {
     console.log(JSON.parse(message.data));
-    if(typeof JSON.parse(message.data).error != 'undefined'){
-        if(JSON.parse(message.data).error == 'used') {
-            alert('Nickname already used')
-        }
+    if(typeof JSON.parse(message.data).caller != 'undefined'){
+        start(true);
     }
     else {
         if (!peerConnection) start(false);
@@ -93,14 +83,14 @@ function gotMessageFromServer(message) {
 
 function gotIceCandidate(event) {
     if(event.candidate != null) {
-        serverConnection.send(JSON.stringify({'isAuthentication':false,'nickname':nickname,'content':{'ice': event.candidate}}));
+        serverConnection.send(JSON.stringify({'content':{'ice': event.candidate}}));
     }
 }
 
 function gotDescription(description) {
     console.log('got description');
     peerConnection.setLocalDescription(description, function () {
-        serverConnection.send(JSON.stringify({'isAuthentication':false,'nickname':nickname,'content':{'sdp': description}}));
+        serverConnection.send(JSON.stringify({'content':{'sdp': description}}));
     }, function() {console.log('set description error')});
 }
 

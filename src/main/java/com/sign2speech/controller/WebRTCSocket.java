@@ -26,26 +26,25 @@ public class WebRTCSocket extends DefaultController {
     @Requires
     Json _json;
 
-    private ConcurrentHashMap<String, ConcurrentHashMap<String, String>> clients =
-            new ConcurrentHashMap<String, ConcurrentHashMap<String, String>>();
-    private ConcurrentHashMap<String, ConcurrentHashMap<String, String>> clientsReversed =
-            new ConcurrentHashMap<String, ConcurrentHashMap<String, String>>();
+    private ConcurrentHashMap<String, ArrayList<String>> clients = new ConcurrentHashMap<String, ArrayList<String>>();
 
     @Opened("/ws/authentication/{roomID}")
     public void open(@Parameter("roomID") String roomID, @Parameter("client") String client) {
         LOGGER.info("Web socket opened by client: {} in room : {}", client, roomID);
+        if(clients.get(roomID) == null){
+            clients.put(roomID, new ArrayList<String>());
+        }
+        clients.get(roomID).add(client);
     }
 
     @Closed("/ws/authentication/{roomID}")
     public void close(@Parameter("roomID") String roomID, @Parameter("client") String client) {
-        if(clientsReversed.get(roomID) != null){
-            if(clientsReversed.get(roomID).get(client) != null) {
-                clients.get(roomID).remove(clientsReversed.get(roomID).get(client));
-                clientsReversed.get(roomID).remove(client);
+        if(clients.get(roomID) != null){
+            if(clients.get(roomID).contains(client)) {
+                clients.get(roomID).remove(client);
             }
             if(clients.get(roomID).isEmpty()){
                 clients.remove(roomID);
-                clientsReversed.remove(roomID);
             }
         }
         LOGGER.info("Web socket closed by client: {} in room : {}", client, roomID);
@@ -55,26 +54,15 @@ public class WebRTCSocket extends DefaultController {
     public void onMessage(@Parameter("roomID") String roomID, @Parameter("client") String client, @Body String message) {
         LOGGER.info("Receiving message from client: {}  in room : {} with content: {}", client, roomID, message);
         JsonNode parsedContent = _json.parse(message);
-        String clientNickname = parsedContent.get("nickname").asText();
-        if(parsedContent.get("isAuthentication").asBoolean()) {
-            if(clients.get(roomID) != null){
-                clients.put(roomID, new ConcurrentHashMap<String, String>());
-                clientsReversed.put(roomID, new ConcurrentHashMap<String, String>());
+        if(parsedContent.get("isReady") != null && parsedContent.get("isReady").asBoolean()) {
+            if(clients.get(roomID).size() > 1) {
+                _publisher.send("/ws/authentication/" + roomID, client, "{\"caller\":true}");
             }
-            if(clients.get(roomID).containsKey(clientNickname)){
-                LOGGER.error("Client: {} demanding nickname: {} but already in use", client, clientNickname);
-                _publisher.send("/ws/authentication/"+roomID, client, "{\"error\":\"used\"}");
-            }
-            else {
-                clients.get(roomID).put(clientNickname, client);
-                clientsReversed.get(roomID).put(client, clientNickname);
-            }
-
         }
         else {
-            for(String c : clients.get(roomID).keySet()){
-                if(!c.equals(clientNickname)){
-                    _publisher.send("/ws/authentication/"+roomID, clients.get(roomID).get(c), parsedContent.get("content").toString());
+            for(String c : clients.get(roomID)){
+                if(!c.equals(client)){
+                    _publisher.send("/ws/authentication/"+roomID, c, parsedContent.get("content").toString());
                 }
             }
         }
