@@ -17,9 +17,9 @@ body
 
 .center_form
 {
-    margin: 150px auto;
+    margin: 200px auto;
     width: 300px;
-    height: 280px;
+    height: 180px;
     background-color: #eceff1;
     border-radius: 10px;
 }
@@ -49,16 +49,26 @@ input:-webkit-autofill:focus {
 
 .vid
 {
-    margin: 0 auto;
-    width: 98%;
-    height: 100%;
+    padding-top: 7px;
+    margin: 10px auto;
+    width: 65%;
+    height: 610px;
     background-color: #eceff1;
     border-radius: 10px;
+    position: relative;
+    text-align: center;
+}
+
+.locRemVids
+{
+    display: block;
+    margin: 0 auto;
+    width: 95%;
 }
 
 #localVideo
 {
-    width:20%;
+    width:25%;
     position: absolute;
     transform: rotateY(180deg);
     -webkit-transform:rotateY(180deg); /* Safari and Chrome */
@@ -67,16 +77,17 @@ input:-webkit-autofill:focus {
 
 #remoteVideo
 {
-    width:60%;
+    width:100%;
 }
 
 #subtitleContent
 {
     position: absolute;
-    top: 700px;
     color: white;
-    font-size: 70px;
-    left: 400px;
+    font-size: xx-large;
+    text-shadow: 3px 0 0 #000000, -3px 0 0 #000000, 0 3px 0 #000000, 0 -3px 0 #000000, 2px 2px #000000, -2px -2px 0 #000000, 2px -2px 0 #000000, -2px 2px 0 #000000;
+    display: inline-block;
+    bottom: 45px;
 }
 
 

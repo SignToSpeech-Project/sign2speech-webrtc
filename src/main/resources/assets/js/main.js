@@ -16,10 +16,10 @@ function pageReady() {
     localVideo = document.getElementById('localVideo');
     remoteVideo = document.getElementById('remoteVideo');
 
-    serverConnection = new WebSocket('ws://172.20.180.131:80/ws/authentication/'+roomID);
+    serverConnection = new WebSocket('ws://localhost:9000/ws/authentication/'+roomID);
     serverConnection.onmessage = gotMessageFromServer;
 
-    subtitleConnection = new WebSocket('ws://172.20.180.131:80/ws/subtitle/'+roomID);
+    subtitleConnection = new WebSocket('ws://localhost:9000/ws/subtitle/'+roomID);
     subtitleConnection.onmessage = gotSubtitleFromServer;
 
     var constraints = {
