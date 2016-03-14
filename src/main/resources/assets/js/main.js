@@ -4,8 +4,8 @@ var peerConnection;
 var peerConnectionConfig = {'iceServers': [{'url': 'stun:stun.services.mozilla.com'}, {'url': 'stun:stun.l.google.com:19302'}]};
 var nickname;
 var serverConnection;
-
 var subtitleConnection;
+var chatConnection;
 
 navigator.getUserMedia = navigator.getUserMedia || navigator.mozGetUserMedia || navigator.webkitGetUserMedia;
 window.RTCPeerConnection = window.RTCPeerConnection || window.mozRTCPeerConnection || window.webkitRTCPeerConnection;
@@ -21,6 +21,10 @@ function pageReady() {
 
     subtitleConnection = new WebSocket('ws://localhost:9000/ws/subtitle/'+roomID);
     subtitleConnection.onmessage = gotSubtitleFromServer;
+
+    chatConnection = new WebSocket('ws://localhost:9000/ws/chat/'+roomID);
+    chatConnection.onmessage = gotChatMessageFromServer;
+    chatConnection.onopen = sendUsername;
 
     var constraints = {
         video: true,
@@ -38,6 +42,21 @@ function gotSubtitleFromServer(message){
     var content = JSON.parse(message.data);
     console.log(content);
     document.getElementById('subtitleContent').innerHTML = content.content;
+}
+
+function gotChatMessageFromServer(message){
+    console.log(message);
+    var content = JSON.parse(message.data);
+    $("#chat-container").html($("#chat-container").html() + "<b>" + content.pseudo + "</b> : " + content.content + "<br>")
+}
+
+function sendUsername(){
+    chatConnection.send(JSON.stringify({'isConnection':true,'username':username}));
+}
+
+function sendChatMessage(){
+    chatConnection.send(JSON.stringify({'content':$("#text-content").val()}));
+    $("#text-content").val("");
 }
 
 function sendSubtitle(){

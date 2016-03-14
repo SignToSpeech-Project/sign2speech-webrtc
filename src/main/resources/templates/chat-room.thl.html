@@ -25,36 +25,26 @@
   		</nav>
 
 		<div id="container" class="row">
-			<div class="col s8" style="height:100%;">
-				<div id="video" class="content">
+			<div class="col s8" style="height:100%;text-align: center;">
+				<div id="video" class="content" style="background-color:transparent;">
 					<div class="locRemVids">
-						<video id="localVideo" autoplay="true" muted="true"></video>
-						<video id="remoteVideo" autoplay="true" muted="true"></video>
+						<video id="localVideo" autoplay="true" muted="true" style="border-top-right-radius:10px;"></video>
+						<video id="remoteVideo" autoplay="true" muted="true" style="border-radius:10px;"></video>
 					</div>
 				</div>
-				<div id="subtitleContent"></div>
+				<div id="subtitleContent" style="bottom:10%"></div>
 			</div>
 			<div class="content col s4" style="height:100%;padding: 0.75rem;">
 				<div id="text" class="content" style="text-align: justify;">
 
-					<div id="chat-container" style="background-color: #fbfbfc; border-radius: 5px;">
-						Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer porttitor tortor non urna imperdiet, sed lacinia neque egestas. Curabitur aliquet magna eget sem imperdiet, ut vehicula est euismod. In hac habitasse platea dictumst. Fusce non malesuada ex, eget fringilla turpis. Morbi imperdiet enim sit amet arcu fermentum tincidunt. Etiam sodales erat ac molestie molestie. Nunc sed ullamcorper tellus, ut pretium leo. Aliquam vel magna at tellus dignissim pellentesque. Mauris vitae justo eget ligula sagittis lacinia. Fusce sed tortor tincidunt, fringilla massa nec, fermentum nunc.
-
-						Phasellus posuere sit amet metus in sagittis. Morbi molestie convallis justo non dignissim. Sed tincidunt turpis lobortis mauris lacinia vulputate. Cras sagittis posuere nibh quis accumsan. Maecenas sit amet turpis posuere, molestie dolor id, molestie mi. In imperdiet risus et ante pretium vulputate. Fusce ex libero, malesuada ac imperdiet non, semper eu leo. Vestibulum sodales, magna quis ultricies dignissim, lorem lacus posuere urna, sit amet maximus arcu arcu a diam. Duis pellentesque risus est, ultricies posuere nisl facilisis a. Vivamus malesuada fringilla bibendum. Etiam interdum vitae neque id luctus. Fusce eget lorem quis lacus venenatis imperdiet sit amet nec sapien. Nullam vitae velit sit amet velit lobortis vestibulum ut non nulla. Vivamus a erat fringilla, sodales eros ut, volutpat orci.
-
-						Sed ultrices dapibus nunc, ac auctor libero aliquet id. Vestibulum sed facilisis dui, vel aliquam massa. Duis imperdiet fermentum turpis, quis rutrum eros ullamcorper et. Nunc nec odio rutrum, lobortis erat a, posuere odio. Phasellus tincidunt enim et semper mollis. Vivamus suscipit sapien sit amet elit placerat, id semper sapien pretium. Proin consectetur imperdiet interdum. Cras ornare ex vel dui ultrices, sit amet pulvinar sem laoreet. Sed ultrices felis id mauris tempus, in vehicula ligula porttitor. Suspendisse potenti. Aliquam ullamcorper vehicula velit, in mattis arcu. Integer id tortor enim. Ut bibendum aliquam dignissim. Ut sit amet nunc lectus. Nulla facilisi. Praesent purus leo, efficitur id blandit vitae, facilisis a arcu.
-
-						Maecenas volutpat odio at leo sodales dignissim. Maecenas ac mauris sed diam gravida convallis. Fusce accumsan tempus lacus, quis eleifend turpis condimentum eget. Vestibulum tempus eros in diam hendrerit, eget tristique lectus interdum. Cras imperdiet egestas euismod. Phasellus venenatis neque nec scelerisque tempus. Cras vel lobortis lacus. In bibendum dignissim justo eget feugiat.
-
-						Morbi sit amet hendrerit velit, vitae pellentesque ex. Sed odio eros, eleifend eget vestibulum quis, bibendum vel purus. Vivamus gravida nisi vel sapien accumsan ultrices. Vestibulum ultricies id justo nec facilisis. Nam a vestibulum lorem. Vivamus ultricies felis sem, eu maximus urna porta a. Sed convallis, mi vel eleifend porttitor, arcu mauris aliquet metus, ut semper mi quam sit amet elit. Cras vestibulum, tellus id venenatis sollicitudin, lectus libero feugiat magna, ac pretium velit orci quis risus. Ut imperdiet, tellus vel feugiat ultricies, justo erat tempus neque, eget scelerisque tortor orci at mauris. Maecenas mattis, libero et viverra finibus, odio mauris hendrerit ligula, ac efficitur diam ex gravida massa.
-					</div>
+					<div id="chat-container" style="background-color: #fbfbfc; border-radius: 5px;"></div>
 
 					<div style="height: 7%;">
 						<div class="input-field col s10" style="height: 100%; margin-top: 0px;background-color: #fbfbfc;border-radius: 5px;">
 							<input id="text-content" type="text" style="height: 100%; border: 0px;box-shadow: none;"></input>
 						</div>
 						<div class="col s2" style="" >
-							<button class="btn waves-effect waves-light" type="submit" name="action" style="margin-top: auto; margin-bottom: auto;">
+							<button class="btn waves-effect waves-light" type="submit" name="action" style="margin-top: auto; margin-bottom: auto;" onclick="sendChatMessage();">
 								<i class="material-icons right" style="margin-left: 0px;">send</i>
 							</button>
 						</div>
@@ -77,6 +67,7 @@
 		<script th:inline="javascript">
 			/*<![CDATA[*/
 			var roomID = /*[[${roomID}]]*/ '123456789';
+			var username = /*[[${username}]]*/ 'username';
 			/*]]>*/
 		</script>
 

@@ -7,6 +7,8 @@ import org.slf4j.LoggerFactory;
 import org.wisdom.api.DefaultController;
 import org.wisdom.api.annotations.*;
 import org.wisdom.api.content.Json;
+import org.wisdom.api.http.HttpMethod;
+import org.wisdom.api.http.Result;
 import org.wisdom.api.http.websockets.Publisher;
 
 import java.util.ArrayList;
@@ -66,5 +68,13 @@ public class WebRTCSocket extends DefaultController {
                 }
             }
         }
+    }
+
+    @Route(method = HttpMethod.GET, uri = "/webrtc/{roomID}/isFull")
+    public Result isFull(@Parameter("roomID") String roomID){
+        if(clients.get(roomID) != null && clients.get(roomID).size() == 2){
+            return badRequest("The requested room is full.").json();
+        }
+        return ok("{}").json();
     }
 }

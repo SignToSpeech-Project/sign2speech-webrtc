@@ -29,9 +29,9 @@ public class WebRTCController extends DefaultController {
         return ok(indexPage);
     }
 
-    @Route(method = HttpMethod.GET, uri = "/webrtc/{roomID}")
-    public Result chatRoom(@Parameter("roomID") String roomID) {
-        return ok(render(chatRoom, "roomID", roomID));
+    @Route(method = HttpMethod.GET, uri = "/webrtc/roomID/{roomID}/username/{username}")
+    public Result chatRoom(@Parameter("roomID") String roomID, @Parameter("username") String username) {
+        return ok(render(chatRoom, "roomID", roomID, "username", username));
     }
 
 }
