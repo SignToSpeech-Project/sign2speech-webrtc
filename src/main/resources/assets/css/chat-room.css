@@ -115,6 +115,11 @@ input:-webkit-autofill:focus {
     box-shadow: none;
 }
 
+#submit {
+    border-radius: 5px;
+    padding: 0 1rem;
+}
+
 /* Classes */
 .brand-logo {
     padding-left: 20px;

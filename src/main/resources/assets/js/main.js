@@ -7,11 +7,6 @@ var subtitleConnection;
 var chatConnection;
 var textContainer;
 
-var constraintsWebRTC = {
-    offerToReceiveAudio:true,
-    offerToReceiveVideo:true
-};
-
 var server = "ws://192.168.1.88:9000";
 
 navigator.getUserMedia = navigator.getUserMedia || navigator.mozGetUserMedia || navigator.webkitGetUserMedia;
@@ -79,8 +74,10 @@ function gotMessageFromServer(message) {
         start(true);
     }
     else if(typeof JSON.parse(message.data).disconnection != 'undefined'){
-        peerConnection.close();
-        remoteVideo.src = null;
+        if(typeof peerConnection != 'undefined') {
+            peerConnection.close();
+            remoteVideo.src = null;
+        }
         $("#loader").css({"display":""});
         start(false);
     }
@@ -90,7 +87,7 @@ function gotMessageFromServer(message) {
         var signal = JSON.parse(message.data);
         if (signal.sdp) {
             peerConnection.setRemoteDescription(new RTCSessionDescription(signal.sdp), function () {
-                peerConnection.createAnswer(gotDescription, errorHandler, constraintsWebRTC);
+                peerConnection.createAnswer(gotDescription, errorHandler);
             }, errorHandler);
         } else if (signal.ice) {
             peerConnection.addIceCandidate(new RTCIceCandidate(signal.ice));
@@ -127,7 +124,7 @@ function start(isCaller) {
     peerConnection.addStream(localStream);
 
     if(isCaller) {
-        peerConnection.createOffer(gotDescription, errorHandler, constraintsWebRTC);
+        peerConnection.createOffer(gotDescription, errorHandler);
     }
 }
 
