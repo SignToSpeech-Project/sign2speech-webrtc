@@ -28,8 +28,10 @@ public class ChatSocket extends DefaultController {
     @Requires
     Json _json;
 
+    // Username --> Key
     private ConcurrentHashMap<String, ConcurrentHashMap<String, String>> clients =
             new ConcurrentHashMap<String, ConcurrentHashMap<String, String>>();
+    // Key --> Username
     private ConcurrentHashMap<String, ConcurrentHashMap<String, String>> clientsReversed =
             new ConcurrentHashMap<String, ConcurrentHashMap<String, String>>();
 
@@ -45,15 +47,25 @@ public class ChatSocket extends DefaultController {
     @Closed("/ws/chat/{roomID}")
     public void close(@Parameter("roomID") String roomID, @Parameter("client") String client) {
         if(clients.get(roomID) != null){
-            if(clientsReversed.get(roomID).contains(client)) {
-                clients.get(roomID).remove(clientsReversed.get(roomID).get(client));
+            String username = clientsReversed.get(roomID).get(client);
+
+            if(clientsReversed.get(roomID).containsKey(client)) {
+                clients.get(roomID).remove(username);
                 clientsReversed.get(roomID).remove(client);
             }
+
             if(clients.get(roomID).isEmpty()){
                 clients.remove(roomID);
             }
+            else{
+                for(String c : clientsReversed.get(roomID).keySet()) {
+                    if(!c.equals(client)) {
+                        _publisher.send("/ws/chat/" + roomID, c, "{\"disconnection\":\"" + username + "\"}");
+                    }
+                }
+            }
             if(clientsReversed.get(roomID).isEmpty()){
-                clients.remove(roomID);
+                clientsReversed.remove(roomID);
             }
         }
         LOGGER.info("Web socket closed by client: {} in room : {}", client, roomID);
@@ -66,6 +78,10 @@ public class ChatSocket extends DefaultController {
         if(parsedContent.get("isConnection") != null && parsedContent.get("isConnection").asBoolean()){
             if(parsedContent.get("username") != null) {
                 clients.get(roomID).put(parsedContent.get("username").asText(), client);
+                for(String c : clientsReversed.get(roomID).keySet()) {
+                    _publisher.send("/ws/chat/" + roomID, c, "{\"connection\":" + parsedContent.get("username") + "}");
+                    _publisher.send("/ws/chat/" + roomID, client, "{\"alreadyConnected\":\"" + clientsReversed.get(roomID).get(c) + "\"}");
+                }
                 clientsReversed.get(roomID).put(client, parsedContent.get("username").asText());
             }
         }

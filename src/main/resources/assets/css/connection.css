@@ -1,27 +1,10 @@
-html
-{
+html {
     height: 100%;
 }
 
-body
-{
+body {
     background-color: #b0bec5;
     height: 100%;
-}
-
-
-.brand-logo
-{
-    padding-left: 20px;
-}
-
-.center_form
-{
-    margin: 200px auto;
-    width: 320px;
-    height: 275px;
-    background-color: #eceff1;
-    border-radius: 10px;
 }
 
 input:-webkit-autofill {
@@ -32,17 +15,27 @@ input:-webkit-autofill {
 input:-webkit-autofill:focus {
     -webkit-box-shadow: 0 0 0 50px white inset;
     -webkit-text-fill-color: #333;
-} 
+}
 
-.labels
-{
+.brand-logo {
+    padding-left: 20px;
+}
+
+.center-form {
+    margin: 200px auto;
+    width: 320px;
+    height: 275px;
+    background-color: #eceff1;
+    border-radius: 10px;
+}
+
+.labels {
     padding-top: 20px;
     margin: 0 auto;
     width: 250px;
 }
 
-.submit_button
-{
+.submit-button {
     margin-top: 20px;
     margin-left: 40px;
 }

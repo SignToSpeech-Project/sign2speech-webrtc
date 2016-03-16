@@ -1,27 +1,14 @@
-html
-{
+html {
     height: 100%;
 }
 
-body
-{
+body {
     background-color: #b0bec5;
     height: 100%;
 }
 
-
-.brand-logo
-{
-    padding-left: 20px;
-}
-
-.center_form
-{
-    margin: 200px auto;
-    width: 300px;
-    height: 180px;
-    background-color: #eceff1;
-    border-radius: 10px;
+nav {
+    position: absolute;
 }
 
 input:-webkit-autofill {
@@ -32,24 +19,9 @@ input:-webkit-autofill {
 input:-webkit-autofill:focus {
     -webkit-box-shadow: 0 0 0 50px white inset;
     -webkit-text-fill-color: #333;
-} 
-
-.labels
-{
-    padding-top: 20px;
-    margin: 0 auto;
-    width: 250px;
 }
 
-.submit_button
-{
-    margin-top: 20px;
-    margin-left: 40px;
-}
-
-nav {
-    position: absolute;
-}
+/* ID */
 
 #container {
     padding: 104px 40px 40px;
@@ -59,51 +31,101 @@ nav {
     height: 100%;
 }
 
-.content {
-    height: 100%;
-    background-color: #eceff1;
-    border-radius: 10px;
+#display-container {
+    height:100%;
     text-align: center;
-    padding: 5px;
 }
 
-#chat-container {
-    overflow: auto;
-    height: 90%;
-    padding: 5px;
-    margin-bottom: 2%;
+#videos {
+    background-color:transparent;
 }
 
-.locRemVids
-{
+#videos-inner {
     display: block;
     margin: 0 auto;
     width: 100%;
     height: 100%;
 }
 
-#localVideo
-{
-    width:20%;
+#localVideo {
+    width:15%;
+    border-top-right-radius:10px;
     position: absolute;
     transform: rotateY(180deg);
     -webkit-transform:rotateY(180deg); /* Safari and Chrome */
     -moz-transform:rotateY(180deg); /* Firefox */
 }
 
-#remoteVideo
-{
-    height:100%;
+#loader {
+    position: absolute;
+    left: 32%;
+    top: 50%;
+    color: white;
+    text-align: center;
 }
 
-#subtitleContent
-{
+#remoteVideo {
+    border-radius:10px;
+    height:100%;
+    max-width: 100%;
+    background-color: #374046;
+}
+
+#subtitleContent {
     position: absolute;
     color: white;
     font-size: xx-large;
+    bottom:10%;
     text-shadow: 3px 0 0 #000000, -3px 0 0 #000000, 0 3px 0 #000000, 0 -3px 0 #000000, 2px 2px #000000, -2px -2px 0 #000000, 2px -2px 0 #000000, -2px 2px 0 #000000;
     display: inline-block;
-    bottom: 45px;
+}
+
+#chat-container {
+    height:100%;
+    padding: 0.75rem;
+}
+
+#text {
+    text-align: justify;
+}
+
+#text-container {
+    overflow: auto;
+    height: 90%;
+    padding: 5px;
+    margin-bottom: 2%;
+    background-color: #fbfbfc;
+    border-radius: 5px;
+}
+
+#form-container {
+    height: 7%;
+}
+
+#input-container {
+    height: 100%;
+    margin-top: 0px;
+    background-color: #fbfbfc;
+    border-radius: 5px;
+}
+
+#input-content {
+    height: 100%;
+    border: 0px;
+    box-shadow: none;
+}
+
+/* Classes */
+.brand-logo {
+    padding-left: 20px;
+}
+
+.content {
+    height: 100%;
+    background-color: #eceff1;
+    border-radius: 10px;
+    text-align: center;
+    padding: 5px;
 }
 
 

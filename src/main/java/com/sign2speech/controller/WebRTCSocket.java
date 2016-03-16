@@ -48,6 +48,9 @@ public class WebRTCSocket extends DefaultController {
             if(clients.get(roomID).isEmpty()){
                 clients.remove(roomID);
             }
+            else{
+                _publisher.publish("/ws/authentication/"+roomID, "{\"disconnection\":true}");
+            }
         }
         LOGGER.info("Web socket closed by client: {} in room : {}", client, roomID);
     }

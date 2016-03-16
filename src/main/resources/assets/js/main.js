@@ -2,10 +2,17 @@ var localVideo;
 var remoteVideo;
 var peerConnection;
 var peerConnectionConfig = {'iceServers': [{'url': 'stun:stun.services.mozilla.com'}, {'url': 'stun:stun.l.google.com:19302'}]};
-var nickname;
 var serverConnection;
 var subtitleConnection;
 var chatConnection;
+var textContainer;
+
+var constraintsWebRTC = {
+    offerToReceiveAudio:true,
+    offerToReceiveVideo:true
+};
+
+var server = "ws://192.168.1.88:9000";
 
 navigator.getUserMedia = navigator.getUserMedia || navigator.mozGetUserMedia || navigator.webkitGetUserMedia;
 window.RTCPeerConnection = window.RTCPeerConnection || window.mozRTCPeerConnection || window.webkitRTCPeerConnection;
@@ -16,15 +23,19 @@ function pageReady() {
     localVideo = document.getElementById('localVideo');
     remoteVideo = document.getElementById('remoteVideo');
 
-    serverConnection = new WebSocket('ws://localhost:9000/ws/authentication/'+roomID);
+    serverConnection = new WebSocket(server+'/ws/authentication/'+roomID);
     serverConnection.onmessage = gotMessageFromServer;
 
-    subtitleConnection = new WebSocket('ws://localhost:9000/ws/subtitle/'+roomID);
+    subtitleConnection = new WebSocket(server+'/ws/subtitle/'+roomID);
     subtitleConnection.onmessage = gotSubtitleFromServer;
 
-    chatConnection = new WebSocket('ws://localhost:9000/ws/chat/'+roomID);
+    chatConnection = new WebSocket(server+'/ws/chat/'+roomID);
     chatConnection.onmessage = gotChatMessageFromServer;
     chatConnection.onopen = sendUsername;
+
+    textContainer = $("#text-container");
+    textContainer.html("Hello <b>"+username+"</b>! You are logged in the room: <b>"+roomID+"</b> and you are ready to chat! :)<br>");
+    textContainer.html(textContainer.html()+"##############################################<br><br>");
 
     var constraints = {
         video: true,
@@ -38,6 +49,7 @@ function pageReady() {
     }
 }
 
+/** Message handlers **/
 function gotSubtitleFromServer(message){
     var content = JSON.parse(message.data);
     console.log(content);
@@ -47,22 +59,60 @@ function gotSubtitleFromServer(message){
 function gotChatMessageFromServer(message){
     console.log(message);
     var content = JSON.parse(message.data);
-    $("#chat-container").html($("#chat-container").html() + "<b>" + content.pseudo + "</b> : " + content.content + "<br>")
+    if(typeof content.connection != 'undefined'){
+        textContainer.html(textContainer.html() + "[<b>"+content.connection+"</b> is now connected]<br>");
+    }
+    else if(typeof content.disconnection != 'undefined'){
+        textContainer.html(textContainer.html() + "[<b>"+content.disconnection+"</b> is now disconnected]<br>");
+    }
+    else if(typeof content.alreadyConnected != 'undefined'){
+        textContainer.html(textContainer.html() + "[<b>"+content.alreadyConnected+"</b> is already connected]<br>");
+    }
+    else {
+        textContainer.html(textContainer.html() + "<b>" + content.pseudo + "</b> : " + content.content + "<br>");
+    }
 }
 
+function gotMessageFromServer(message) {
+    console.log(JSON.parse(message.data));
+    if(typeof JSON.parse(message.data).caller != 'undefined'){
+        start(true);
+    }
+    else if(typeof JSON.parse(message.data).disconnection != 'undefined'){
+        peerConnection.close();
+        remoteVideo.src = null;
+        $("#loader").css({"display":""});
+        start(false);
+    }
+    else {
+        if (!peerConnection) start(false);
+
+        var signal = JSON.parse(message.data);
+        if (signal.sdp) {
+            peerConnection.setRemoteDescription(new RTCSessionDescription(signal.sdp), function () {
+                peerConnection.createAnswer(gotDescription, errorHandler, constraintsWebRTC);
+            }, errorHandler);
+        } else if (signal.ice) {
+            peerConnection.addIceCandidate(new RTCIceCandidate(signal.ice));
+        }
+    }
+}
+
+/** Message sending functions **/
 function sendUsername(){
     chatConnection.send(JSON.stringify({'isConnection':true,'username':username}));
 }
 
 function sendChatMessage(){
-    chatConnection.send(JSON.stringify({'content':$("#text-content").val()}));
-    $("#text-content").val("");
+    chatConnection.send(JSON.stringify({'content':$("#input-content").val()}));
+    $("#input-content").val("");
 }
 
 function sendSubtitle(){
     subtitleConnection.send(JSON.stringify({'content':document.getElementById('subtitle').value}));
 }
 
+/** Others **/
 function getUserMediaSuccess(stream) {
     localStream = stream;
     localVideo.src = window.URL.createObjectURL(stream);
@@ -77,27 +127,7 @@ function start(isCaller) {
     peerConnection.addStream(localStream);
 
     if(isCaller) {
-        peerConnection.createOffer(gotDescription, errorHandler);
-    }
-}
-
-function gotMessageFromServer(message) {
-    console.log(JSON.parse(message.data));
-    //TODO add peerConnection.close(); when client is gone
-    if(typeof JSON.parse(message.data).caller != 'undefined'){
-        start(true);
-    }
-    else {
-        if (!peerConnection) start(false);
-
-        var signal = JSON.parse(message.data);
-        if (signal.sdp) {
-            peerConnection.setRemoteDescription(new RTCSessionDescription(signal.sdp), function () {
-                peerConnection.createAnswer(gotDescription, errorHandler);
-            }, errorHandler);
-        } else if (signal.ice) {
-            peerConnection.addIceCandidate(new RTCIceCandidate(signal.ice));
-        }
+        peerConnection.createOffer(gotDescription, errorHandler, constraintsWebRTC);
     }
 }
 
@@ -117,6 +147,7 @@ function gotDescription(description) {
 function gotRemoteStream(event) {
     console.log('got remote stream');
     remoteVideo.src = window.URL.createObjectURL(event.stream);
+    $("#loader").css({"display":"none"});
 }
 
 function errorHandler(error) {
