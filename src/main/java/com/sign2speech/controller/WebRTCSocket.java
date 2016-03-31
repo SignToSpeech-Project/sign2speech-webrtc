@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Created by matth on 14/02/2016.
+ * Controller for the WebRTC authentication WebSocket channel
  */
 @Controller
 public class WebRTCSocket extends DefaultController {
@@ -33,6 +33,7 @@ public class WebRTCSocket extends DefaultController {
     @Opened("/ws/authentication/{roomID}")
     public void open(@Parameter("roomID") String roomID, @Parameter("client") String client) {
         LOGGER.info("Web socket opened by client: {} in room : {}", client, roomID);
+        // create the room
         if(clients.get(roomID) == null){
             clients.put(roomID, new ArrayList<String>());
         }
@@ -41,6 +42,7 @@ public class WebRTCSocket extends DefaultController {
 
     @Closed("/ws/authentication/{roomID}")
     public void close(@Parameter("roomID") String roomID, @Parameter("client") String client) {
+        // remove client from the HashMaps
         if(clients.get(roomID) != null){
             if(clients.get(roomID).contains(client)) {
                 clients.get(roomID).remove(client);
@@ -49,6 +51,7 @@ public class WebRTCSocket extends DefaultController {
                 clients.remove(roomID);
             }
             else{
+                // inform that client X is disconnected
                 _publisher.publish("/ws/authentication/"+roomID, "{\"disconnection\":true}");
             }
         }
@@ -59,12 +62,15 @@ public class WebRTCSocket extends DefaultController {
     public void onMessage(@Parameter("roomID") String roomID, @Parameter("client") String client, @Body String message) {
         LOGGER.info("Receiving message from client: {}  in room : {} with content: {}", client, roomID, message);
         JsonNode parsedContent = _json.parse(message);
+        // check if the client is ready
         if(parsedContent.get("isReady") != null && parsedContent.get("isReady").asBoolean()) {
+            // if the client is not alone in the room assign him the role of caller
             if(clients.get(roomID).size() > 1) {
                 _publisher.send("/ws/authentication/" + roomID, client, "{\"caller\":true}");
             }
         }
         else {
+            // otherwise dispatch the message to all clients excepted the base client
             for(String c : clients.get(roomID)){
                 if(!c.equals(client)){
                     _publisher.send("/ws/authentication/"+roomID, c, parsedContent.get("content").toString());
@@ -73,6 +79,11 @@ public class WebRTCSocket extends DefaultController {
         }
     }
 
+    /**
+     * Check if a room is full or not
+     * @param roomID The name of the room to check
+     * @return OK if the room is not full, BADREQUEST otherwise
+     */
     @Route(method = HttpMethod.GET, uri = "/webrtc/{roomID}/isFull")
     public Result isFull(@Parameter("roomID") String roomID){
         if(clients.get(roomID) != null && clients.get(roomID).size() == 2){

@@ -7,12 +7,19 @@ var subtitleConnection;
 var chatConnection;
 var textContainer;
 
-var server = "ws://192.168.1.88:9000";
+var server = "ws://localhost:9000";
 
 navigator.getUserMedia = navigator.getUserMedia || navigator.mozGetUserMedia || navigator.webkitGetUserMedia;
 window.RTCPeerConnection = window.RTCPeerConnection || window.mozRTCPeerConnection || window.webkitRTCPeerConnection;
 window.RTCIceCandidate = window.RTCIceCandidate || window.mozRTCIceCandidate || window.webkitRTCIceCandidate;
 window.RTCSessionDescription = window.RTCSessionDescription || window.mozRTCSessionDescription || window.webkitRTCSessionDescription;
+
+$(document).ready(function(){
+    $('#input-content').keypress(function(e){
+        if(e.keyCode==13)
+            $('#submit').click();
+    });
+});
 
 function pageReady() {
     localVideo = document.getElementById('localVideo');
@@ -30,7 +37,7 @@ function pageReady() {
 
     textContainer = $("#text-container");
     textContainer.html("Hello <b>"+username+"</b>! You are logged in the room: <b>"+roomID+"</b> and you are ready to chat! :)<br>");
-    textContainer.html(textContainer.html()+"##############################################<br><br>");
+    textContainer.html(textContainer.html()+"#######################################<br><br>");
 
     var constraints = {
         video: true,

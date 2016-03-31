@@ -12,7 +12,7 @@ import org.wisdom.api.templates.Template;
 import java.net.URL;
 
 /**
- * Created by matth on 12/02/2016.
+ * Controller serving all the pages
  */
 @Controller
 public class WebRTCController extends DefaultController {

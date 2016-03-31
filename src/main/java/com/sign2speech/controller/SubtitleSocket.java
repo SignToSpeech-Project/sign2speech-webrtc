@@ -12,7 +12,7 @@ import org.wisdom.api.http.websockets.Publisher;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Created by matthieu on 15/02/16.
+ * Controller for the Subtitle WebSocket channel
  */
 @Controller
 public class SubtitleSocket extends DefaultController{
@@ -38,6 +38,7 @@ public class SubtitleSocket extends DefaultController{
     @OnMessage("/ws/subtitle/{roomID}")
     public void onMessage(@Parameter("roomID") String roomID, @Parameter("client") String client, @Body String message) {
         LOGGER.info("Receiving message from client: {}  in room : {} with content: {}", client, roomID, message);
+        // dispatch the message to all the clients attached to the room
         _publisher.publish("/ws/subtitle/"+roomID, message);
     }
 }

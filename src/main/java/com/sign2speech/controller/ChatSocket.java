@@ -11,11 +11,10 @@ import org.wisdom.api.http.HttpMethod;
 import org.wisdom.api.http.Result;
 import org.wisdom.api.http.websockets.Publisher;
 
-import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Created by matth on 14/02/2016.
+ * Controller for the chat WebSocket channel
  */
 @Controller
 public class ChatSocket extends DefaultController {
@@ -38,6 +37,7 @@ public class ChatSocket extends DefaultController {
     @Opened("/ws/chat/{roomID}")
     public void open(@Parameter("roomID") String roomID, @Parameter("client") String client) {
         LOGGER.info("Web socket opened by client: {} in room : {}", client, roomID);
+        // create the room
         if(clients.get(roomID) == null){
             clients.put(roomID, new ConcurrentHashMap<String, String>());
             clientsReversed.put(roomID, new ConcurrentHashMap<String, String>());
@@ -46,6 +46,7 @@ public class ChatSocket extends DefaultController {
 
     @Closed("/ws/chat/{roomID}")
     public void close(@Parameter("roomID") String roomID, @Parameter("client") String client) {
+        // remove client from HashMaps
         if(clients.get(roomID) != null){
             String username = clientsReversed.get(roomID).get(client);
 
@@ -54,10 +55,12 @@ public class ChatSocket extends DefaultController {
                 clientsReversed.get(roomID).remove(client);
             }
 
+            // if the room is empty remove the room
             if(clients.get(roomID).isEmpty()){
                 clients.remove(roomID);
             }
             else{
+                // if not inform all remaining clients that the client X is disconnected
                 for(String c : clientsReversed.get(roomID).keySet()) {
                     if(!c.equals(client)) {
                         _publisher.send("/ws/chat/" + roomID, c, "{\"disconnection\":\"" + username + "\"}");
@@ -75,11 +78,16 @@ public class ChatSocket extends DefaultController {
     public void onMessage(@Parameter("roomID") String roomID, @Parameter("client") String client, @Body String message) {
         LOGGER.info("Receiving message from client: {}  in room : {} with content: {}", client, roomID, message);
         JsonNode parsedContent = _json.parse(message);
+
+        // check if the message contains information about the client (username)
         if(parsedContent.get("isConnection") != null && parsedContent.get("isConnection").asBoolean()){
             if(parsedContent.get("username") != null) {
+                // add client to the HashMaps
                 clients.get(roomID).put(parsedContent.get("username").asText(), client);
                 for(String c : clientsReversed.get(roomID).keySet()) {
+                    // inform that client X is connected
                     _publisher.send("/ws/chat/" + roomID, c, "{\"connection\":" + parsedContent.get("username") + "}");
+                    // inform client X who is already connected
                     _publisher.send("/ws/chat/" + roomID, client, "{\"alreadyConnected\":\"" + clientsReversed.get(roomID).get(c) + "\"}");
                 }
                 clientsReversed.get(roomID).put(client, parsedContent.get("username").asText());
@@ -92,6 +100,12 @@ public class ChatSocket extends DefaultController {
         }
     }
 
+    /**
+     * Check if the username is already used or not
+     * @param roomID The name of the room where you want to find if username exists
+     * @param username The username to check
+     * @return OK if username is not already used, BADREQUEST otherwise
+     */
     @Route(method = HttpMethod.GET, uri = "/webrtc/{roomID}/isValid/{username}")
     public Result isValidUsername(@Parameter("roomID") String roomID, @Parameter("username") String username){
         if(clients.get(roomID) != null && clients.get(roomID).containsKey(username)){
