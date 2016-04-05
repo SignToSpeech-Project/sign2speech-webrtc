@@ -56,6 +56,9 @@ function gotSubtitleFromServer(message){
     var content = JSON.parse(message.data);
     console.log(content);
     document.getElementById('subtitleContent').innerHTML = content.content;
+    var date = new Date();
+    textContainer.html(textContainer.html() + date.getHours() + ":" + date.getMinutes() + "'" + date.getSeconds() + " - New subtitle: <b>"+content.content+"</b><br>");
+    $("#text-container").scrollTop($("#text-container")[0].scrollHeight);
 }
 
 function gotChatMessageFromServer(message){
@@ -73,6 +76,7 @@ function gotChatMessageFromServer(message){
     else {
         textContainer.html(textContainer.html() + "<b>" + content.pseudo + "</b> : " + content.content + "<br>");
     }
+    $("#text-container").scrollTop($("#text-container")[0].scrollHeight);
 }
 
 function gotMessageFromServer(message) {
@@ -113,7 +117,7 @@ function sendChatMessage(){
 }
 
 function sendSubtitle(){
-    subtitleConnection.send(JSON.stringify({'content':document.getElementById('subtitle').value}));
+    subtitleConnection.send(JSON.stringify({'content':document.getElementById('subtitle').value})); 
 }
 
 /** Others **/
