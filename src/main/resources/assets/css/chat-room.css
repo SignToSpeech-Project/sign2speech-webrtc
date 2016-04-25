@@ -3,7 +3,7 @@ html {
 }
 
 body {
-    background-color: #b0bec5;
+    background-color: #eceff1;
     height: 100%;
 }
 
@@ -68,7 +68,7 @@ input:-webkit-autofill:focus {
     border-radius:10px;
     height:100%;
     max-width: 100%;
-    background-color: #374046;
+    background-color: #01579b;
 }
 
 #subtitleContent {
@@ -127,7 +127,7 @@ input:-webkit-autofill:focus {
 
 .content {
     height: 100%;
-    background-color: #eceff1;
+    background-color: #e4e7e9;
     border-radius: 10px;
     text-align: center;
     padding: 5px;

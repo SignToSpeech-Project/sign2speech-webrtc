@@ -29,6 +29,24 @@ public class WebRTCController extends DefaultController {
         return ok(indexPage);
     }
 
+    @Route(method = HttpMethod.GET, uri = "/webrtc/whatisit.html")
+    public Result whatisit() {
+        URL indexPage = this.getClass().getClassLoader().getResource("/assets/whatisit.html");
+        return ok(indexPage);
+    }
+
+    @Route(method = HttpMethod.GET, uri = "/webrtc/howtostart.html")
+    public Result howtostart() {
+        URL indexPage = this.getClass().getClassLoader().getResource("/assets/howtostart.html");
+        return ok(indexPage);
+    }
+
+    @Route(method = HttpMethod.GET, uri = "/webrtc/contact.html")
+    public Result contact() {
+        URL indexPage = this.getClass().getClassLoader().getResource("/assets/contact.html");
+        return ok(indexPage);
+    }
+
     @Route(method = HttpMethod.GET, uri = "/webrtc/roomID/{roomID}/username/{username}")
     public Result chatRoom(@Parameter("roomID") String roomID, @Parameter("username") String username) {
         return ok(render(chatRoom, "roomID", roomID, "username", username));
