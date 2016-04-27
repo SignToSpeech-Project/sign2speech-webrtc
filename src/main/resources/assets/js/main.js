@@ -7,6 +7,8 @@ var subtitleConnection;
 var chatConnection;
 var textContainer;
 
+var timeoutHandle = null;
+
 var server = "ws://localhost:9000";
 
 navigator.getUserMedia = navigator.getUserMedia || navigator.mozGetUserMedia || navigator.webkitGetUserMedia;
@@ -56,6 +58,14 @@ function gotSubtitleFromServer(message){
     var content = JSON.parse(message.data);
     console.log(content);
     document.getElementById('subtitleContent').innerHTML = content.content;
+    if(timeoutHandle != null){
+        window.clearTimeout(timeoutHandle);
+    }
+    $("#subtitleContent").css("display","");
+    timeoutHandle = window.setTimeout(function(){
+        $("#subtitleContent").fadeOut("fast", "linear");
+        timeoutHandle = null;
+    }, 3000);
     var date = new Date();
     textContainer.html(textContainer.html() + date.getHours() + ":" + date.getMinutes() + "'" + date.getSeconds() + " - New subtitle: <b>"+content.content+"</b><br>");
     $("#text-container").scrollTop($("#text-container")[0].scrollHeight);
